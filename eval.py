@@ -22,4 +22,12 @@ if __name__ == '__main__':
 
     ndcg = scores.apply(lambda r: ndcg_score([r['score_true']], [r['score_pred']], k=args.k), axis=1).mean()
 
+    directories_pred = args.pred.split('/')
+
+    f = open('/'.join(directories_pred[:3]) + "/results.txt", "w")
+    f.write(f'NDCG@{args.k}: {ndcg:.3f}')
+
     print(f'NDCG@{args.k}: {ndcg:.3f}')
+
+    f.close()
+
