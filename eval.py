@@ -3,7 +3,6 @@ from argparse import ArgumentParser
 import pandas as pd
 from sklearn.metrics import ndcg_score
 
-
 if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('--true', dest='true', help='tsv file with true (question, passage) pairs', metavar='FILE')
@@ -20,14 +19,25 @@ if __name__ == '__main__':
     scores = scores.groupby('question-id').agg(list)
     scores = scores.reset_index()
 
-    ndcg = scores.apply(lambda r: ndcg_score([r['score_true']], [r['score_pred']], k=args.k), axis=1).mean()
+    print(scores)
+
+
+    def score(r):
+        # Check if there is only one true passage and only one result returned, and if the result matches the true
+        # value. Then, return 1 as the metric value
+        if len(r['score_true']) == 1 and len(r['score_pred']) == 1 and r['passage-id'][0] == pred[
+            pred['question-id'] == r['question-id']].iloc[0]['passage-id']:
+            return 1
+        return ndcg_score([r['score_true']], [r['score_pred']], k=args.k)
+
+
+    ndcg = scores.apply(score, axis=1).mean()
 
     directories_pred = args.pred.split('/')
 
-    f = open('/'.join(directories_pred[:3]) + "/results.txt", "w")
+    f = open('/'.join(directories_pred[:(len(directories_pred) - 1)]) + "/results.txt", "w")
     f.write(f'NDCG@{args.k}: {ndcg:.3f}')
 
     print(f'NDCG@{args.k}: {ndcg:.3f}')
 
     f.close()
-
