@@ -1,3 +1,5 @@
+# NOT CONSIDERED IN PROJECT RESULTS - CODE TO USE MEAN VECTOR EMBEDDINGS USING SPACY MODEL.
+
 from haystack.components.embedders import SentenceTransformersTextEmbedder, SentenceTransformersDocumentEmbedder
 import spacy
 from spacy import Language
